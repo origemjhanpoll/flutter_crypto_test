@@ -7,7 +7,6 @@ class CryptoService {
   static const String _baseUrl = 'https://api.coincap.io/v2/assets';
   static const String _webSocketUrl = 'wss://ws.coincap.io/prices?assets=';
 
-  // Buscar dados iniciais de uma criptomoeda
   Future<Map<String, dynamic>> fetchCrypto(String cryptoId) async {
     final url = Uri.parse('$_baseUrl/$cryptoId');
     final response = await http.get(url);
@@ -21,7 +20,6 @@ class CryptoService {
     }
   }
 
-  // Iniciar WebSocket para atualizações de preço
   WebSocketChannel connectToWebSocket(String crypto) {
     final url = Uri.parse('$_webSocketUrl$crypto');
     debugPrint({'websocket': url.toString()}.toString());

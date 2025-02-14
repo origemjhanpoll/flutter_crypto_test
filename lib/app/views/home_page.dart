@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'crypto_service.dart';
+import '../services/crypto_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

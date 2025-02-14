@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_crypto_test/app/home_page.dart';
+import 'package:flutter_crypto_test/app/views/home_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -7,7 +7,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Crypto Test',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
