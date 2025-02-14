@@ -1,7 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_crypto_test/app/services/api_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import '../services/crypto_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,13 +12,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final CryptoService _cryptoService = CryptoService();
+  final ApiService _apiService = ApiService();
   WebSocketChannel? _channel;
-  Map<String, dynamic>? _cryptoData;
-  Map<String, dynamic> _realTimePrices = {};
-  bool _isLoading = true;
-  String? _errorMessage;
-  double? _previousPrice;
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -25,64 +22,38 @@ class _HomePageState extends State<HomePage> {
     _loadCryptoData();
   }
 
-  void _loadCryptoData() async {
-    try {
-      final data = await _cryptoService.fetchCrypto('bitcoin');
-      setState(() {
-        _cryptoData = data;
-        _isLoading = false;
-      });
-
-      _channel = _cryptoService.connectToWebSocket('bitcoin');
-      _channel!.stream.listen((message) {
-        final realTimeData = Map<String, dynamic>.from(jsonDecode(message));
-        debugPrint('Received WebSocket message: $realTimeData');
-        setState(() {
-          _previousPrice =
-              _realTimePrices['bitcoin'] != null
-                  ? double.parse(_realTimePrices['bitcoin'])
-                  : null;
-          _realTimePrices = realTimeData;
-        });
-      });
-    } catch (error) {
-      setState(() {
-        _errorMessage = 'Erro ao carregar dados';
-        _isLoading = false;
-      });
-    }
-  }
-
   @override
   void dispose() {
+    _pageController.dispose();
     _channel?.sink.close();
     super.dispose();
+  }
+
+  void _loadCryptoData() async {
+    try {
+      _channel = _apiService.connectToWebSocket(['bitcoin']);
+      _channel!.stream.listen((message) {
+        final Map<String, dynamic> priceUpdate = jsonDecode(message);
+        debugPrint(priceUpdate.toString());
+      });
+    } catch (error) {
+      debugPrint(error.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dados de Criptomoedas')),
-      body:
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : _errorMessage != null
-              ? Center(
-                child: Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red),
-                ),
-              )
-              : _cryptoData != null
-              ? BuildCryptoInfo(
-                name: _cryptoData!['name'],
-                symbol: _cryptoData!['symbol'],
-                price: double.parse(_realTimePrices['bitcoin'] ?? "0.0"),
-                previousPrice: _previousPrice,
-                change: double.parse(_cryptoData!['changePercent24Hr']),
-                volume: double.parse(_cryptoData!['volumeUsd24Hr']),
-              )
-              : Center(child: Text('Nenhum dado encontrado')),
+      appBar: AppBar(title: Text("AppBar Home")),
+      body: Center(child: Text('Home Page')),
+      // body: BuildCryptoInfo(
+      //   name: _cryptoData!['name'],
+      //   symbol: _cryptoData!['symbol'],
+      //   price: double.parse(_cryptoData!['price']),
+      //   previousPrice: _previousPrice,
+      //   change: double.parse(_cryptoData!['changePercent24Hr']),
+      //   volume: double.parse(_cryptoData!['volumeUsd24Hr']),
+      // ),
     );
   }
 }
