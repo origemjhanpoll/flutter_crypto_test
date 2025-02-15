@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_crypto_test/app/app.dart';
+import 'package:flutter_crypto_test/app/injection.dart' as di;
 
-void main() {
+void main() async {
+  await di.init();
   runApp(const Main());
 }
 

@@ -4,12 +4,17 @@ import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ApiService {
+  final http.Client client;
+  ApiService(this.client);
+
   static const String _baseUrl = 'https://api.coincap.io/v2/assets';
   static const String _webSocketUrl = 'wss://ws.coincap.io/prices?assets=';
 
-  Future<Map<String, dynamic>> fetchCrypto(List<String> cryptos) async {
-    final url = Uri.parse('$_baseUrl/${cryptos.isNotEmpty ? cryptos : ''}');
-    final response = await http.get(url);
+  Future<List<dynamic>> searchCrypto(String query) async {
+    final url = Uri.parse(
+      '$_baseUrl/${query.isNotEmpty ? '?search=$query' : ''}',
+    );
+    final response = await client.get(url);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

@@ -12,10 +12,10 @@ class CryptoModel with _$CryptoModel {
     required String name,
     required String supply,
     String? maxSupply,
-    required String marketCapUsd,
-    required String volumeUsd24Hr,
+    String? marketCapUsd,
+    String? volumeUsd24Hr,
     required String priceUsd,
-    required String changePercent24Hr,
+    String? changePercent24Hr,
     String? vwap24Hr,
   }) = _CryptoModel;
 

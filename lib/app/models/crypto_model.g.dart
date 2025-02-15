@@ -14,10 +14,10 @@ _$CryptoModelImpl _$$CryptoModelImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       supply: json['supply'] as String,
       maxSupply: json['maxSupply'] as String?,
-      marketCapUsd: json['marketCapUsd'] as String,
-      volumeUsd24Hr: json['volumeUsd24Hr'] as String,
+      marketCapUsd: json['marketCapUsd'] as String?,
+      volumeUsd24Hr: json['volumeUsd24Hr'] as String?,
       priceUsd: json['priceUsd'] as String,
-      changePercent24Hr: json['changePercent24Hr'] as String,
+      changePercent24Hr: json['changePercent24Hr'] as String?,
       vwap24Hr: json['vwap24Hr'] as String?,
     );
 

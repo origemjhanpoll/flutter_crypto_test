@@ -1,8 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_crypto_test/app/services/api_service.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_crypto_test/app/injection.dart';
+import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_cubit.dart';
+import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_state.dart';
+import 'package:flutter_crypto_test/app/views/molecules/asset_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,48 +13,70 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ApiService _apiService = ApiService();
-  WebSocketChannel? _channel;
   final PageController _pageController = PageController();
+
+  late CryptosCubit _cubit;
 
   @override
   void initState() {
+    _cubit = di<CryptosCubit>();
+    _cubit.load(query: '').whenComplete(() {
+      // _cubit.updatePrices();
+    });
     super.initState();
-    _loadCryptoData();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _channel?.sink.close();
+    _cubit.close();
     super.dispose();
-  }
-
-  void _loadCryptoData() async {
-    try {
-      _channel = _apiService.connectToWebSocket(['bitcoin']);
-      _channel!.stream.listen((message) {
-        final Map<String, dynamic> priceUpdate = jsonDecode(message);
-        debugPrint(priceUpdate.toString());
-      });
-    } catch (error) {
-      debugPrint(error.toString());
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("AppBar Home")),
-      body: Center(child: Text('Home Page')),
-      // body: BuildCryptoInfo(
-      //   name: _cryptoData!['name'],
-      //   symbol: _cryptoData!['symbol'],
-      //   price: double.parse(_cryptoData!['price']),
-      //   previousPrice: _previousPrice,
-      //   change: double.parse(_cryptoData!['changePercent24Hr']),
-      //   volume: double.parse(_cryptoData!['volumeUsd24Hr']),
-      // ),
+      body: BlocBuilder<CryptosCubit, CryptosState>(
+        bloc: _cubit,
+        builder: (context, state) {
+          if (state is CryptoLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is CryptoSuccess) {
+            return ListView.separated(
+              itemCount: state.cryptos.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final asset = state.cryptos[index];
+                // final assetIds = state.cryptos.map((crypto) => crypto.id);
+                return Column(
+                  children: [
+                    AssetWidget(
+                      id: asset.id,
+                      rank: asset.rank,
+                      symbol: asset.symbol,
+                      name: asset.name,
+                      supply: asset.supply,
+                      maxSupply: asset.maxSupply,
+                      marketCapUsd: asset.marketCapUsd,
+                      volumeUsd24Hr: asset.volumeUsd24Hr,
+                      priceUsd: asset.priceUsd,
+                      changePercent24Hr: asset.changePercent24Hr,
+                      vwap24Hr: asset.vwap24Hr,
+                    ),
+                  ],
+                );
+              },
+              separatorBuilder: (context, index) => Divider(),
+            );
+          } else if (state is CryptoEmpty) {
+            return const Center(child: Text('Nenhum crypto encontrado.'));
+          } else if (state is CryptoError) {
+            return Center(child: Text(state.message));
+          }
+          return const LimitedBox();
+        },
+      ),
     );
   }
 }

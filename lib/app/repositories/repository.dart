@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crypto_test/app/models/crypto_model.dart';
 import 'package:flutter_crypto_test/app/repositories/i_repository.dart';
@@ -16,14 +18,13 @@ class Repository implements IRepository {
   final LocalService _localService;
 
   @override
-  Future<List<CryptoModel>> fetchCrypto(List<String> cryptos) async {
+  Future<List<CryptoModel>> searchCrypto(String query) async {
     try {
-      final jsonData = _apiService.fetchCrypto(cryptos);
-      final response =
-          (jsonData as List)
-              .map((cryptoJson) => CryptoModel.fromJson(cryptoJson))
-              .toList();
-      return response;
+      final jsonData = await _apiService.searchCrypto(query);
+
+      return jsonData
+          .map((cryptoJson) => CryptoModel.fromJson(cryptoJson))
+          .toList();
     } catch (e) {
       debugPrint('Erro ao buscar criptos: $e');
       rethrow;

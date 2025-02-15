@@ -27,10 +27,10 @@ mixin _$CryptoModel {
   String get name => throw _privateConstructorUsedError;
   String get supply => throw _privateConstructorUsedError;
   String? get maxSupply => throw _privateConstructorUsedError;
-  String get marketCapUsd => throw _privateConstructorUsedError;
-  String get volumeUsd24Hr => throw _privateConstructorUsedError;
+  String? get marketCapUsd => throw _privateConstructorUsedError;
+  String? get volumeUsd24Hr => throw _privateConstructorUsedError;
   String get priceUsd => throw _privateConstructorUsedError;
-  String get changePercent24Hr => throw _privateConstructorUsedError;
+  String? get changePercent24Hr => throw _privateConstructorUsedError;
   String? get vwap24Hr => throw _privateConstructorUsedError;
 
   /// Serializes this CryptoModel to a JSON map.
@@ -57,10 +57,10 @@ abstract class $CryptoModelCopyWith<$Res> {
     String name,
     String supply,
     String? maxSupply,
-    String marketCapUsd,
-    String volumeUsd24Hr,
+    String? marketCapUsd,
+    String? volumeUsd24Hr,
     String priceUsd,
-    String changePercent24Hr,
+    String? changePercent24Hr,
     String? vwap24Hr,
   });
 }
@@ -86,10 +86,10 @@ class _$CryptoModelCopyWithImpl<$Res, $Val extends CryptoModel>
     Object? name = null,
     Object? supply = null,
     Object? maxSupply = freezed,
-    Object? marketCapUsd = null,
-    Object? volumeUsd24Hr = null,
+    Object? marketCapUsd = freezed,
+    Object? volumeUsd24Hr = freezed,
     Object? priceUsd = null,
-    Object? changePercent24Hr = null,
+    Object? changePercent24Hr = freezed,
     Object? vwap24Hr = freezed,
   }) {
     return _then(
@@ -125,25 +125,25 @@ class _$CryptoModelCopyWithImpl<$Res, $Val extends CryptoModel>
                     : maxSupply // ignore: cast_nullable_to_non_nullable
                         as String?,
             marketCapUsd:
-                null == marketCapUsd
+                freezed == marketCapUsd
                     ? _value.marketCapUsd
                     : marketCapUsd // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             volumeUsd24Hr:
-                null == volumeUsd24Hr
+                freezed == volumeUsd24Hr
                     ? _value.volumeUsd24Hr
                     : volumeUsd24Hr // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             priceUsd:
                 null == priceUsd
                     ? _value.priceUsd
                     : priceUsd // ignore: cast_nullable_to_non_nullable
                         as String,
             changePercent24Hr:
-                null == changePercent24Hr
+                freezed == changePercent24Hr
                     ? _value.changePercent24Hr
                     : changePercent24Hr // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             vwap24Hr:
                 freezed == vwap24Hr
                     ? _value.vwap24Hr
@@ -171,10 +171,10 @@ abstract class _$$CryptoModelImplCopyWith<$Res>
     String name,
     String supply,
     String? maxSupply,
-    String marketCapUsd,
-    String volumeUsd24Hr,
+    String? marketCapUsd,
+    String? volumeUsd24Hr,
     String priceUsd,
-    String changePercent24Hr,
+    String? changePercent24Hr,
     String? vwap24Hr,
   });
 }
@@ -199,10 +199,10 @@ class __$$CryptoModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? supply = null,
     Object? maxSupply = freezed,
-    Object? marketCapUsd = null,
-    Object? volumeUsd24Hr = null,
+    Object? marketCapUsd = freezed,
+    Object? volumeUsd24Hr = freezed,
     Object? priceUsd = null,
-    Object? changePercent24Hr = null,
+    Object? changePercent24Hr = freezed,
     Object? vwap24Hr = freezed,
   }) {
     return _then(
@@ -238,25 +238,25 @@ class __$$CryptoModelImplCopyWithImpl<$Res>
                 : maxSupply // ignore: cast_nullable_to_non_nullable
                     as String?,
         marketCapUsd:
-            null == marketCapUsd
+            freezed == marketCapUsd
                 ? _value.marketCapUsd
                 : marketCapUsd // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         volumeUsd24Hr:
-            null == volumeUsd24Hr
+            freezed == volumeUsd24Hr
                 ? _value.volumeUsd24Hr
                 : volumeUsd24Hr // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         priceUsd:
             null == priceUsd
                 ? _value.priceUsd
                 : priceUsd // ignore: cast_nullable_to_non_nullable
                     as String,
         changePercent24Hr:
-            null == changePercent24Hr
+            freezed == changePercent24Hr
                 ? _value.changePercent24Hr
                 : changePercent24Hr // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         vwap24Hr:
             freezed == vwap24Hr
                 ? _value.vwap24Hr
@@ -277,10 +277,10 @@ class _$CryptoModelImpl implements _CryptoModel {
     required this.name,
     required this.supply,
     this.maxSupply,
-    required this.marketCapUsd,
-    required this.volumeUsd24Hr,
+    this.marketCapUsd,
+    this.volumeUsd24Hr,
     required this.priceUsd,
-    required this.changePercent24Hr,
+    this.changePercent24Hr,
     this.vwap24Hr,
   });
 
@@ -300,13 +300,13 @@ class _$CryptoModelImpl implements _CryptoModel {
   @override
   final String? maxSupply;
   @override
-  final String marketCapUsd;
+  final String? marketCapUsd;
   @override
-  final String volumeUsd24Hr;
+  final String? volumeUsd24Hr;
   @override
   final String priceUsd;
   @override
-  final String changePercent24Hr;
+  final String? changePercent24Hr;
   @override
   final String? vwap24Hr;
 
@@ -378,10 +378,10 @@ abstract class _CryptoModel implements CryptoModel {
     required final String name,
     required final String supply,
     final String? maxSupply,
-    required final String marketCapUsd,
-    required final String volumeUsd24Hr,
+    final String? marketCapUsd,
+    final String? volumeUsd24Hr,
     required final String priceUsd,
-    required final String changePercent24Hr,
+    final String? changePercent24Hr,
     final String? vwap24Hr,
   }) = _$CryptoModelImpl;
 
@@ -401,13 +401,13 @@ abstract class _CryptoModel implements CryptoModel {
   @override
   String? get maxSupply;
   @override
-  String get marketCapUsd;
+  String? get marketCapUsd;
   @override
-  String get volumeUsd24Hr;
+  String? get volumeUsd24Hr;
   @override
   String get priceUsd;
   @override
-  String get changePercent24Hr;
+  String? get changePercent24Hr;
   @override
   String? get vwap24Hr;
 
