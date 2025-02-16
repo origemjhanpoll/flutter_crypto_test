@@ -29,7 +29,7 @@ mixin _$CryptoModel {
   String? get maxSupply => throw _privateConstructorUsedError;
   String? get marketCapUsd => throw _privateConstructorUsedError;
   String? get volumeUsd24Hr => throw _privateConstructorUsedError;
-  String get priceUsd => throw _privateConstructorUsedError;
+  String? get priceUsd => throw _privateConstructorUsedError;
   String? get changePercent24Hr => throw _privateConstructorUsedError;
   String? get vwap24Hr => throw _privateConstructorUsedError;
 
@@ -59,7 +59,7 @@ abstract class $CryptoModelCopyWith<$Res> {
     String? maxSupply,
     String? marketCapUsd,
     String? volumeUsd24Hr,
-    String priceUsd,
+    String? priceUsd,
     String? changePercent24Hr,
     String? vwap24Hr,
   });
@@ -88,7 +88,7 @@ class _$CryptoModelCopyWithImpl<$Res, $Val extends CryptoModel>
     Object? maxSupply = freezed,
     Object? marketCapUsd = freezed,
     Object? volumeUsd24Hr = freezed,
-    Object? priceUsd = null,
+    Object? priceUsd = freezed,
     Object? changePercent24Hr = freezed,
     Object? vwap24Hr = freezed,
   }) {
@@ -135,10 +135,10 @@ class _$CryptoModelCopyWithImpl<$Res, $Val extends CryptoModel>
                     : volumeUsd24Hr // ignore: cast_nullable_to_non_nullable
                         as String?,
             priceUsd:
-                null == priceUsd
+                freezed == priceUsd
                     ? _value.priceUsd
                     : priceUsd // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             changePercent24Hr:
                 freezed == changePercent24Hr
                     ? _value.changePercent24Hr
@@ -173,7 +173,7 @@ abstract class _$$CryptoModelImplCopyWith<$Res>
     String? maxSupply,
     String? marketCapUsd,
     String? volumeUsd24Hr,
-    String priceUsd,
+    String? priceUsd,
     String? changePercent24Hr,
     String? vwap24Hr,
   });
@@ -201,7 +201,7 @@ class __$$CryptoModelImplCopyWithImpl<$Res>
     Object? maxSupply = freezed,
     Object? marketCapUsd = freezed,
     Object? volumeUsd24Hr = freezed,
-    Object? priceUsd = null,
+    Object? priceUsd = freezed,
     Object? changePercent24Hr = freezed,
     Object? vwap24Hr = freezed,
   }) {
@@ -248,10 +248,10 @@ class __$$CryptoModelImplCopyWithImpl<$Res>
                 : volumeUsd24Hr // ignore: cast_nullable_to_non_nullable
                     as String?,
         priceUsd:
-            null == priceUsd
+            freezed == priceUsd
                 ? _value.priceUsd
                 : priceUsd // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         changePercent24Hr:
             freezed == changePercent24Hr
                 ? _value.changePercent24Hr
@@ -279,7 +279,7 @@ class _$CryptoModelImpl implements _CryptoModel {
     this.maxSupply,
     this.marketCapUsd,
     this.volumeUsd24Hr,
-    required this.priceUsd,
+    this.priceUsd,
     this.changePercent24Hr,
     this.vwap24Hr,
   });
@@ -304,7 +304,7 @@ class _$CryptoModelImpl implements _CryptoModel {
   @override
   final String? volumeUsd24Hr;
   @override
-  final String priceUsd;
+  final String? priceUsd;
   @override
   final String? changePercent24Hr;
   @override
@@ -380,7 +380,7 @@ abstract class _CryptoModel implements CryptoModel {
     final String? maxSupply,
     final String? marketCapUsd,
     final String? volumeUsd24Hr,
-    required final String priceUsd,
+    final String? priceUsd,
     final String? changePercent24Hr,
     final String? vwap24Hr,
   }) = _$CryptoModelImpl;
@@ -405,7 +405,7 @@ abstract class _CryptoModel implements CryptoModel {
   @override
   String? get volumeUsd24Hr;
   @override
-  String get priceUsd;
+  String? get priceUsd;
   @override
   String? get changePercent24Hr;
   @override

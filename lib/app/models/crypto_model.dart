@@ -14,7 +14,7 @@ class CryptoModel with _$CryptoModel {
     String? maxSupply,
     String? marketCapUsd,
     String? volumeUsd24Hr,
-    required String priceUsd,
+    String? priceUsd,
     String? changePercent24Hr,
     String? vwap24Hr,
   }) = _CryptoModel;

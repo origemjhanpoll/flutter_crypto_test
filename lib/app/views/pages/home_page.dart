@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crypto_test/app/injection.dart';
@@ -14,13 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController();
-
   late TextEditingController _controller;
   late FocusNode _focusNode;
 
   late CryptosCubit _cubit;
   late PriceCubit _priceCubit;
+
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -33,12 +35,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _pageController.dispose();
     _controller.dispose();
     _focusNode.dispose();
-    _cubit.close();
     _priceCubit.close();
     super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _cubit.load(query: value);
+    });
   }
 
   @override
@@ -52,6 +59,7 @@ class _HomePageState extends State<HomePage> {
           onSubmitted: (_) => _cubit.load(query: _controller.text),
           leading: Icon(Icons.search),
           constraints: BoxConstraints.tight(Size.fromHeight(40)),
+          onChanged: (value) => _onSearchChanged(value),
           trailing: [
             ValueListenableBuilder(
               valueListenable: _controller,
@@ -89,6 +97,7 @@ class _HomePageState extends State<HomePage> {
                 final asset = state.cryptos[index];
 
                 return AssetWidget(
+                  onTap: (id) => () {},
                   bloc: _priceCubit,
                   id: asset.id,
                   rank: asset.rank,
@@ -106,9 +115,16 @@ class _HomePageState extends State<HomePage> {
               separatorBuilder: (context, index) => Divider(),
             );
           } else if (state is CryptoEmpty) {
-            return const Center(child: Text('Nenhum crypto encontrado.'));
+            return const Center(
+              child: Text(
+                'Nenhum crypto encontrado.',
+                textAlign: TextAlign.center,
+              ),
+            );
           } else if (state is CryptoError) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: Text(state.message, textAlign: TextAlign.center),
+            );
           }
           return const SizedBox.shrink();
         },
