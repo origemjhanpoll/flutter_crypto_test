@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crypto_test/app/repositories/i_repository.dart';
 import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_state.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CryptosCubit extends Cubit<CryptosState> {
   final IRepository _repository;
+  StreamSubscription<Map<String, String>>? _priceSubscription;
+  final StreamController<Map<String, String>> _priceController =
+      StreamController.broadcast();
 
   CryptosCubit({required IRepository repository})
     : _repository = repository,
@@ -21,6 +24,7 @@ class CryptosCubit extends Cubit<CryptosState> {
         emit(CryptoEmpty());
       } else {
         emit(CryptoSuccess(cryptos: cryptosResult));
+        _startPriceUpdates(cryptosResult.map((e) => e.id).toList());
       }
     } on HttpException catch (error) {
       emit(CryptoError(error.message));
@@ -29,7 +33,19 @@ class CryptosCubit extends Cubit<CryptosState> {
     }
   }
 
-  WebSocketChannel updatePrices({List<String>? cryptos}) {
-    return _repository.updatePrices(cryptos ?? []);
+  void _startPriceUpdates(List<String> ids) {
+    _priceSubscription?.cancel();
+    _priceSubscription = _repository.getPricesStream(ids).listen((prices) {
+      _priceController.add(prices);
+    });
+  }
+
+  Stream<Map<String, String>> get allPricesStream => _priceController.stream;
+
+  @override
+  Future<void> close() {
+    _priceSubscription?.cancel();
+    _priceController.close();
+    return super.close();
   }
 }

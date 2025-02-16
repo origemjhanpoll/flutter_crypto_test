@@ -20,9 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _cubit = di<CryptosCubit>();
-    _cubit.load(query: '').whenComplete(() {
-      // _cubit.updatePrices();
-    });
+    _cubit.load(query: '');
     super.initState();
   }
 
@@ -43,97 +41,34 @@ class _HomePageState extends State<HomePage> {
           if (state is CryptoLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CryptoSuccess) {
-            return ListView.separated(
+            return ListView.builder(
               itemCount: state.cryptos.length,
-              shrinkWrap: true,
               itemBuilder: (context, index) {
                 final asset = state.cryptos[index];
-                // final assetIds = state.cryptos.map((crypto) => crypto.id);
-                return Column(
-                  children: [
-                    AssetWidget(
-                      id: asset.id,
-                      rank: asset.rank,
-                      symbol: asset.symbol,
-                      name: asset.name,
-                      supply: asset.supply,
-                      maxSupply: asset.maxSupply,
-                      marketCapUsd: asset.marketCapUsd,
-                      volumeUsd24Hr: asset.volumeUsd24Hr,
-                      priceUsd: asset.priceUsd,
-                      changePercent24Hr: asset.changePercent24Hr,
-                      vwap24Hr: asset.vwap24Hr,
-                    ),
-                  ],
+
+                return AssetWidget(
+                  cubit: _cubit,
+                  id: asset.id,
+                  rank: asset.rank,
+                  symbol: asset.symbol,
+                  name: asset.name,
+                  supply: asset.supply,
+                  maxSupply: asset.maxSupply,
+                  marketCapUsd: asset.marketCapUsd,
+                  volumeUsd24Hr: asset.volumeUsd24Hr,
+                  priceUsd: asset.priceUsd,
+                  changePercent24Hr: asset.changePercent24Hr,
+                  vwap24Hr: asset.vwap24Hr,
                 );
               },
-              separatorBuilder: (context, index) => Divider(),
             );
           } else if (state is CryptoEmpty) {
             return const Center(child: Text('Nenhum crypto encontrado.'));
           } else if (state is CryptoError) {
             return Center(child: Text(state.message));
           }
-          return const LimitedBox();
+          return const SizedBox.shrink();
         },
-      ),
-    );
-  }
-}
-
-class BuildCryptoInfo extends StatelessWidget {
-  final String name;
-  final String symbol;
-  final double price;
-  final double? previousPrice;
-  final double change;
-  final double volume;
-
-  const BuildCryptoInfo({
-    super.key,
-    required this.name,
-    required this.symbol,
-    required this.price,
-    this.previousPrice,
-    required this.change,
-    required this.volume,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '$name ($symbol)',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Preço: \$$price', style: TextStyle(fontSize: 20)),
-              SizedBox(width: 8),
-              if (previousPrice != null)
-                Icon(
-                  price > previousPrice!
-                      ? Icons.arrow_upward
-                      : Icons.arrow_downward,
-                  color: price > previousPrice! ? Colors.green : Colors.red,
-                ),
-            ],
-          ),
-          Text(
-            'Variação 24h: $change%',
-            style: TextStyle(
-              fontSize: 18,
-              color: change >= 0 ? Colors.green : Colors.red,
-            ),
-          ),
-          Text('Volume 24h: \$$volume', style: TextStyle(fontSize: 18)),
-        ],
       ),
     );
   }

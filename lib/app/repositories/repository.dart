@@ -5,7 +5,6 @@ import 'package:flutter_crypto_test/app/models/crypto_model.dart';
 import 'package:flutter_crypto_test/app/repositories/i_repository.dart';
 import 'package:flutter_crypto_test/app/services/api_service.dart';
 import 'package:flutter_crypto_test/app/services/local_service.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class Repository implements IRepository {
   Repository({
@@ -32,9 +31,17 @@ class Repository implements IRepository {
   }
 
   @override
-  WebSocketChannel updatePrices(List<String> cryptos) {
+  Stream<Map<String, String>> getPricesStream(List<String> ids) {
     try {
-      return _apiService.connectToWebSocket(cryptos);
+      return _apiService.connectToWebSocket(ids).stream.map((event) {
+        try {
+          final Map<String, dynamic> data = jsonDecode(event);
+          return data.map((key, value) => MapEntry(key, value.toString()));
+        } catch (e) {
+          debugPrint('Erro ao decodificar JSON do WebSocket: $e');
+          return {}; // Retorna um mapa vazio em caso de erro
+        }
+      });
     } catch (e) {
       debugPrint('Erro ao conectar ao WebSocket: $e');
       rethrow;
