@@ -10,7 +10,7 @@ class CryptoModel with _$CryptoModel {
     required String rank,
     required String symbol,
     required String name,
-    required String supply,
+    String? supply,
     String? maxSupply,
     String? marketCapUsd,
     String? volumeUsd24Hr,

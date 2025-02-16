@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crypto_test/app/injection.dart';
 import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_state.dart';
+import 'package:flutter_crypto_test/app/viewmodel/price/price_cubit.dart';
 import 'package:flutter_crypto_test/app/views/molecules/asset_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,39 +16,80 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
 
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+
   late CryptosCubit _cubit;
+  late PriceCubit _priceCubit;
 
   @override
   void initState() {
-    _cubit = di<CryptosCubit>();
-    _cubit.load(query: '');
+    _cubit = di<CryptosCubit>()..load();
+    _priceCubit = di<PriceCubit>();
+    _controller = TextEditingController();
+    _focusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _controller.dispose();
+    _focusNode.dispose();
     _cubit.close();
+    _priceCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("AppBar Home")),
-      body: BlocBuilder<CryptosCubit, CryptosState>(
+      appBar: AppBar(
+        title: SearchBar(
+          focusNode: _focusNode,
+          controller: _controller,
+          onTapOutside: (_) => _focusNode.unfocus(),
+          onSubmitted: (_) => _cubit.load(query: _controller.text),
+          leading: Icon(Icons.search),
+          constraints: BoxConstraints.tight(Size.fromHeight(40)),
+          trailing: [
+            ValueListenableBuilder(
+              valueListenable: _controller,
+              builder: (context, value, child) {
+                if (value.text.isNotEmpty) {
+                  return IconButton(
+                    onPressed: () {
+                      _controller.clear();
+                      _cubit.load();
+                    },
+                    icon: Icon(Icons.close),
+                  );
+                } else {
+                  return LimitedBox();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      body: BlocConsumer<CryptosCubit, CryptosState>(
         bloc: _cubit,
+        listener: (context, state) {
+          if (state is CryptoSuccess) {
+            _priceCubit.startPriceUpdates();
+          }
+        },
         builder: (context, state) {
           if (state is CryptoLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CryptoSuccess) {
-            return ListView.builder(
+            return ListView.separated(
               itemCount: state.cryptos.length,
               itemBuilder: (context, index) {
                 final asset = state.cryptos[index];
 
                 return AssetWidget(
-                  cubit: _cubit,
+                  bloc: _priceCubit,
                   id: asset.id,
                   rank: asset.rank,
                   symbol: asset.symbol,
@@ -61,6 +103,7 @@ class _HomePageState extends State<HomePage> {
                   vwap24Hr: asset.vwap24Hr,
                 );
               },
+              separatorBuilder: (context, index) => Divider(),
             );
           } else if (state is CryptoEmpty) {
             return const Center(child: Text('Nenhum crypto encontrado.'));

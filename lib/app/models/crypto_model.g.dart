@@ -12,7 +12,7 @@ _$CryptoModelImpl _$$CryptoModelImplFromJson(Map<String, dynamic> json) =>
       rank: json['rank'] as String,
       symbol: json['symbol'] as String,
       name: json['name'] as String,
-      supply: json['supply'] as String,
+      supply: json['supply'] as String?,
       maxSupply: json['maxSupply'] as String?,
       marketCapUsd: json['marketCapUsd'] as String?,
       volumeUsd24Hr: json['volumeUsd24Hr'] as String?,

@@ -12,7 +12,7 @@ class ApiService {
 
   Future<List<dynamic>> searchCrypto(String query) async {
     final url = Uri.parse(
-      '$_baseUrl/${query.isNotEmpty ? '?search=$query' : ''}',
+      '$_baseUrl${query.isNotEmpty ? '?search=$query' : ''}',
     );
     final response = await client.get(url);
 

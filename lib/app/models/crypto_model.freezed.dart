@@ -25,7 +25,7 @@ mixin _$CryptoModel {
   String get rank => throw _privateConstructorUsedError;
   String get symbol => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get supply => throw _privateConstructorUsedError;
+  String? get supply => throw _privateConstructorUsedError;
   String? get maxSupply => throw _privateConstructorUsedError;
   String? get marketCapUsd => throw _privateConstructorUsedError;
   String? get volumeUsd24Hr => throw _privateConstructorUsedError;
@@ -55,7 +55,7 @@ abstract class $CryptoModelCopyWith<$Res> {
     String rank,
     String symbol,
     String name,
-    String supply,
+    String? supply,
     String? maxSupply,
     String? marketCapUsd,
     String? volumeUsd24Hr,
@@ -84,7 +84,7 @@ class _$CryptoModelCopyWithImpl<$Res, $Val extends CryptoModel>
     Object? rank = null,
     Object? symbol = null,
     Object? name = null,
-    Object? supply = null,
+    Object? supply = freezed,
     Object? maxSupply = freezed,
     Object? marketCapUsd = freezed,
     Object? volumeUsd24Hr = freezed,
@@ -115,10 +115,10 @@ class _$CryptoModelCopyWithImpl<$Res, $Val extends CryptoModel>
                     : name // ignore: cast_nullable_to_non_nullable
                         as String,
             supply:
-                null == supply
+                freezed == supply
                     ? _value.supply
                     : supply // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             maxSupply:
                 freezed == maxSupply
                     ? _value.maxSupply
@@ -169,7 +169,7 @@ abstract class _$$CryptoModelImplCopyWith<$Res>
     String rank,
     String symbol,
     String name,
-    String supply,
+    String? supply,
     String? maxSupply,
     String? marketCapUsd,
     String? volumeUsd24Hr,
@@ -197,7 +197,7 @@ class __$$CryptoModelImplCopyWithImpl<$Res>
     Object? rank = null,
     Object? symbol = null,
     Object? name = null,
-    Object? supply = null,
+    Object? supply = freezed,
     Object? maxSupply = freezed,
     Object? marketCapUsd = freezed,
     Object? volumeUsd24Hr = freezed,
@@ -228,10 +228,10 @@ class __$$CryptoModelImplCopyWithImpl<$Res>
                 : name // ignore: cast_nullable_to_non_nullable
                     as String,
         supply:
-            null == supply
+            freezed == supply
                 ? _value.supply
                 : supply // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         maxSupply:
             freezed == maxSupply
                 ? _value.maxSupply
@@ -275,7 +275,7 @@ class _$CryptoModelImpl implements _CryptoModel {
     required this.rank,
     required this.symbol,
     required this.name,
-    required this.supply,
+    this.supply,
     this.maxSupply,
     this.marketCapUsd,
     this.volumeUsd24Hr,
@@ -296,7 +296,7 @@ class _$CryptoModelImpl implements _CryptoModel {
   @override
   final String name;
   @override
-  final String supply;
+  final String? supply;
   @override
   final String? maxSupply;
   @override
@@ -376,7 +376,7 @@ abstract class _CryptoModel implements CryptoModel {
     required final String rank,
     required final String symbol,
     required final String name,
-    required final String supply,
+    final String? supply,
     final String? maxSupply,
     final String? marketCapUsd,
     final String? volumeUsd24Hr,
@@ -397,7 +397,7 @@ abstract class _CryptoModel implements CryptoModel {
   @override
   String get name;
   @override
-  String get supply;
+  String? get supply;
   @override
   String? get maxSupply;
   @override
