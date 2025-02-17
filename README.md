@@ -21,7 +21,7 @@ Este aplicativo exibe informações sobre criptomoedas, permitindo visualizar da
 
 ## Baixar o APK
 
-Você pode baixar o APK do app Android diretamente [clicando aqui](assets/media/app-apk).
+Você pode baixar o APK do app Android diretamente [clicando aqui](https://github.com/origemjhanpoll/flutter_crypto_test/raw/refs/heads/main/assets/media/app-crypto.apk).
 
 ## 📂 Estrutura do Projeto
 
