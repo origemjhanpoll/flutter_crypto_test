@@ -7,12 +7,16 @@ Este aplicativo exibe informações sobre criptomoedas, permitindo visualizar da
 ![mobile](assets/media/screen1.png)
 ![mobile](assets/media/screen2.png)
 
+<p align="center">
+  <img src="assets/media/screen.gif" alt="Mobile Screen"  width="50%" />
+</p>
+
 ## 🚀 Tecnologias Utilizadas
 
 - **Linguagem:** Dart
 - **Framework:** Flutter
 - **Arquitetura:** MVVM
-- **Padrão de UI:** Atomic Design (atoms, molecules, organisms, templates)
+- **Padrão de UI:** Atomic Design (atoms, molecules, organisms, templates e pages)
 - **Gerenciamento de estado:** Bloc
 
 ## 📂 Estrutura do Projeto
