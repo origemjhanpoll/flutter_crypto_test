@@ -17,7 +17,7 @@ class AssetWidget extends StatefulWidget {
   final String? priceUsd;
   final String? changePercent24Hr;
   final String? vwap24Hr;
-  final ValueChanged<String>? onTap;
+  final VoidCallback? onTap;
 
   const AssetWidget({
     super.key,
@@ -46,7 +46,7 @@ class _AssetWidgetState extends State<AssetWidget> {
   @override
   void initState() {
     super.initState();
-    lastPrice = widget.priceUsd; // Define o preço inicial
+    lastPrice = widget.priceUsd;
   }
 
   @override
@@ -54,7 +54,7 @@ class _AssetWidgetState extends State<AssetWidget> {
     final theme = Theme.of(context);
 
     return ListTile(
-      onTap: () => widget.onTap?.call(widget.id),
+      onTap: widget.onTap,
       dense: true,
       visualDensity: VisualDensity.compact,
       leading: AssetIconWidget(symbol: widget.symbol),
@@ -81,7 +81,7 @@ class _AssetWidgetState extends State<AssetWidget> {
 
               return Text(
                 lastPrice != null
-                    ? '\$${formatPrice(double.parse(lastPrice!))}'
+                    ? '\$${formatMultPrices(double.parse(lastPrice!))}'
                     : '--',
                 style: theme.textTheme.bodyMedium!.copyWith(
                   fontWeight: FontWeight.bold,

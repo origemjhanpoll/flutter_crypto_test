@@ -32,4 +32,17 @@ class ApiService {
     debugPrint({'websocket': url.toString()}.toString());
     return WebSocketChannel.connect(url);
   }
+
+  Future<List<dynamic>> availableMarkets(String id) async {
+    final url = Uri.parse('$_baseUrl/$id/markets');
+    final response = await client.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      debugPrint({'http': url.toString()}.toString());
+      return data['data'];
+    } else {
+      throw Exception('Erro ao buscar dados do mercado');
+    }
+  }
 }

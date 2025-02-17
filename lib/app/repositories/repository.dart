@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_crypto_test/app/models/crypto_markets_model.dart';
 import 'package:flutter_crypto_test/app/models/crypto_model.dart';
 import 'package:flutter_crypto_test/app/repositories/i_repository.dart';
 import 'package:flutter_crypto_test/app/services/api_service.dart';
@@ -44,6 +45,20 @@ class Repository implements IRepository {
       });
     } catch (e) {
       debugPrint('Erro ao conectar ao WebSocket: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<CryptoMarketsModel>> getAssetMarket(String query) async {
+    try {
+      final jsonData = await _apiService.availableMarkets(query);
+
+      return jsonData
+          .map((cryptoJson) => CryptoMarketsModel.fromJson(cryptoJson))
+          .toList();
+    } catch (e) {
+      debugPrint('Erro ao buscar mercado: $e');
       rethrow;
     }
   }

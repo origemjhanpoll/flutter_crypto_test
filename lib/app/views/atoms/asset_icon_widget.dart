@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 
 class AssetIconWidget extends StatelessWidget {
   final String symbol;
-  const AssetIconWidget({super.key, required this.symbol});
+  final double dimension;
+  const AssetIconWidget({
+    super.key,
+    required this.symbol,
+    this.dimension = 40.0,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox.square(
-      dimension: 40.0,
+      dimension: dimension,
       child: ClipOval(
         child: CachedNetworkImage(
           errorWidget: (context, url, error) {

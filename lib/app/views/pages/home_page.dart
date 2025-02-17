@@ -7,6 +7,7 @@ import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_state.dart';
 import 'package:flutter_crypto_test/app/viewmodel/price/price_cubit.dart';
 import 'package:flutter_crypto_test/app/views/molecules/asset_widget.dart';
+import 'package:flutter_crypto_test/app/views/pages/details_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -97,7 +98,14 @@ class _HomePageState extends State<HomePage> {
                 final asset = state.cryptos[index];
 
                 return AssetWidget(
-                  onTap: (id) => () {},
+                  onTap:
+                      () => {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => DetailsPage(asset: asset),
+                          ),
+                        ),
+                      },
                   bloc: _priceCubit,
                   id: asset.id,
                   rank: asset.rank,
