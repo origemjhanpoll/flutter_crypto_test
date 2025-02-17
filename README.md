@@ -19,6 +19,10 @@ Este aplicativo exibe informações sobre criptomoedas, permitindo visualizar da
 - **Padrão de UI:** Atomic Design (atoms, molecules, organisms, templates e pages)
 - **Gerenciamento de estado:** Bloc
 
+## Baixar o APK
+
+Você pode baixar o APK do app Android diretamente [clicando aqui](assets/media/app-apk).
+
 ## 📂 Estrutura do Projeto
 
 O projeto segue uma estrutura modularizada:
