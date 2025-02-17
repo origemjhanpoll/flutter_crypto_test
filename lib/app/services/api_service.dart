@@ -45,4 +45,20 @@ class ApiService {
       throw Exception('Erro ao buscar dados do mercado');
     }
   }
+
+  Future<List<dynamic>> history({
+    required String id,
+    required String interval,
+  }) async {
+    final url = Uri.parse('$_baseUrl/$id/history?interval=$interval');
+    final response = await client.get(url);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      debugPrint({'http': url.toString()}.toString());
+      return data['data'];
+    } else {
+      throw Exception('Erro ao buscar dados do historico');
+    }
+  }
 }

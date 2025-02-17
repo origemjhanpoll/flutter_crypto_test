@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_crypto_test/app/models/crypto_markets_model.dart';
 import 'package:flutter_crypto_test/app/models/crypto_model.dart';
+import 'package:flutter_crypto_test/app/models/crypto_price_history.dart';
 import 'package:flutter_crypto_test/app/repositories/i_repository.dart';
 import 'package:flutter_crypto_test/app/services/api_service.dart';
 import 'package:flutter_crypto_test/app/services/local_service.dart';
@@ -22,9 +23,7 @@ class Repository implements IRepository {
     try {
       final jsonData = await _apiService.searchCrypto(query);
 
-      return jsonData
-          .map((cryptoJson) => CryptoModel.fromJson(cryptoJson))
-          .toList();
+      return jsonData.map((json) => CryptoModel.fromJson(json)).toList();
     } catch (e) {
       debugPrint('Erro ao buscar criptos: $e');
       rethrow;
@@ -40,7 +39,7 @@ class Repository implements IRepository {
           return data.map((key, value) => MapEntry(key, value.toString()));
         } catch (e) {
           debugPrint('Erro ao decodificar JSON do WebSocket: $e');
-          return {}; // Retorna um mapa vazio em caso de erro
+          return {};
         }
       });
     } catch (e) {
@@ -54,11 +53,24 @@ class Repository implements IRepository {
     try {
       final jsonData = await _apiService.availableMarkets(query);
 
-      return jsonData
-          .map((cryptoJson) => CryptoMarketsModel.fromJson(cryptoJson))
-          .toList();
+      return jsonData.map((json) => CryptoMarketsModel.fromJson(json)).toList();
     } catch (e) {
       debugPrint('Erro ao buscar mercado: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<CryptoPriceHistory>> getHistory({
+    required String id,
+    required String interval,
+  }) async {
+    try {
+      final jsonData = await _apiService.history(id: id, interval: interval);
+
+      return jsonData.map((json) => CryptoPriceHistory.fromJson(json)).toList();
+    } catch (e) {
+      debugPrint('Erro ao buscar intervalo: $e');
       rethrow;
     }
   }

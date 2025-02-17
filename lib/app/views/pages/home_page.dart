@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: SearchBar(
@@ -61,12 +62,14 @@ class _HomePageState extends State<HomePage> {
           leading: Icon(Icons.search),
           constraints: BoxConstraints.tight(Size.fromHeight(40)),
           onChanged: (value) => _onSearchChanged(value),
+          hintText: 'Pesquisar',
           trailing: [
             ValueListenableBuilder(
               valueListenable: _controller,
               builder: (context, value, child) {
                 if (value.text.isNotEmpty) {
                   return IconButton(
+                    color: theme.colorScheme.primary,
                     onPressed: () {
                       _controller.clear();
                       _cubit.load();
@@ -85,7 +88,12 @@ class _HomePageState extends State<HomePage> {
         bloc: _cubit,
         listener: (context, state) {
           if (state is CryptoSuccess) {
-            _priceCubit.startPriceUpdates();
+            if (_controller.text.isNotEmpty) {
+              final ids = state.cryptos.map((element) => element.id).toList();
+              _priceCubit.startPriceUpdates(ids: ids);
+            } else {
+              _priceCubit.startPriceUpdates();
+            }
           }
         },
         builder: (context, state) {

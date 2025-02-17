@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crypto_test/app/injection.dart';
 import 'package:flutter_crypto_test/app/models/crypto_model.dart';
+import 'package:flutter_crypto_test/app/viewmodel/history/history_cubit.dart';
+import 'package:flutter_crypto_test/app/viewmodel/history/history_state.dart';
 import 'package:flutter_crypto_test/app/viewmodel/markets/markets_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/markets/markets_state.dart';
+import 'package:flutter_crypto_test/app/viewmodel/price/price_cubit.dart';
 import 'package:flutter_crypto_test/app/views/atoms/asset_icon_widget.dart';
+import 'package:flutter_crypto_test/app/views/molecules/interval_selector_widget.dart';
+import 'package:flutter_crypto_test/app/views/organisms/chart_widget.dart';
 import 'package:flutter_crypto_test/core/constants/padding_size.dart';
 import 'package:flutter_crypto_test/core/utils/format_price.dart';
 
@@ -17,25 +22,37 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  late MarketsCubit _cubit;
+  late PriceCubit _priceCubit;
+  late HistoryCubit _historyCubit;
+  late MarketsCubit _marketsCubit;
+
+  String? lastPrice;
 
   @override
   void initState() {
-    _cubit = di<MarketsCubit>();
+    lastPrice = widget.asset.priceUsd;
+    _priceCubit = di<PriceCubit>();
+    _historyCubit = di<HistoryCubit>();
+    _marketsCubit = di<MarketsCubit>();
     super.initState();
   }
 
   @override
   void dispose() {
-    _cubit.close();
+    _priceCubit.close();
+    _historyCubit.close();
+    _marketsCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BlocProvider(
-      create: (context) => _cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => _historyCubit),
+        BlocProvider(create: (context) => _marketsCubit),
+      ],
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: theme.colorScheme.primary),
@@ -64,143 +81,242 @@ class _DetailsPageState extends State<DetailsPage> {
             IconButton(onPressed: () {}, icon: Icon(size: 28.0, Icons.add)),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            spacing: 1,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(PaddingSize.medium),
-                child: Text(
-                  'Estatísticas de moedas',
-                  style: theme.textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+        body: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                BlocBuilder<PriceCubit, Map<String, String>>(
+                  bloc: _priceCubit..startPriceUpdates(ids: [widget.asset.id]),
+                  builder: (context, prices) {
+                    final price = prices[widget.asset.id];
 
-              StatisticItem(labelStart: 'Rank', labelEnd: widget.asset.rank),
-              if (widget.asset.marketCapUsd != null)
-                StatisticItem(
-                  labelStart: 'Valor de mercado',
-                  labelEnd: formatPrice(
-                    double.parse(widget.asset.marketCapUsd!),
-                  ),
-                ),
-              if (widget.asset.vwap24Hr != null)
-                StatisticItem(
-                  labelStart: 'PMPV (24Hr)',
-                  labelEnd: formatPrice(double.parse(widget.asset.vwap24Hr!)),
-                ),
-              if (widget.asset.supply != null)
-                StatisticItem(
-                  labelStart: 'Fornecimento',
-                  labelEnd: formatPrice(double.parse(widget.asset.supply!)),
-                ),
-              if (widget.asset.volumeUsd24Hr != null)
-                StatisticItem(
-                  labelStart: 'Volume (24Hr)',
-                  labelEnd:
-                      '\$${formatMultPrices(double.parse(widget.asset.volumeUsd24Hr!))}',
-                ),
-              if (widget.asset.changePercent24Hr != null)
-                StatisticItem(
-                  labelStart: 'Volume (24Hr)',
-                  labelEnd:
-                      '${double.parse(widget.asset.changePercent24Hr!) > 0 ? '▲' : '▼'} ${double.parse(widget.asset.changePercent24Hr!).toStringAsFixed(2)}%',
-                  colorEnd:
-                      double.parse(widget.asset.changePercent24Hr!) >= 0
-                          ? Colors.green
-                          : Colors.red,
-                ),
-              Padding(
-                padding: EdgeInsets.all(PaddingSize.medium),
-                child: Text(
-                  'Mercados disponíveis',
-                  style: theme.textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Divider(height: 1),
-              Padding(
-                padding: EdgeInsets.all(PaddingSize.small),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Nome',
-                        style: theme.textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Par',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Volume (24Hr)',
-                        textAlign: TextAlign.end,
+                    if (price != null) {
+                      lastPrice = price;
+                    }
 
-                        style: theme.textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              BlocBuilder<MarketsCubit, MarketsState>(
-                bloc: _cubit..load(widget.asset.id),
-                builder: (context, state) {
-                  if (state is MarketLoading) {
                     return Padding(
-                      padding: EdgeInsets.only(top: PaddingSize.extraLarge),
-                      child: const Center(child: CircularProgressIndicator()),
+                      padding: EdgeInsets.only(top: PaddingSize.medium),
+                      child: Text(
+                        lastPrice != null
+                            ? '\$${formatMultPrices(double.parse(lastPrice!))}'
+                            : '--',
+                        style: theme.textTheme.headlineMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     );
-                  } else if (state is MarketSuccess) {
-                    return ListView.separated(
-                      primary: false,
-                      itemCount: state.markets.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final market = state.markets[index];
-
-                        return StatisticItem(
-                          labelStart: market.exchangeId,
-                          labelCenter:
-                              '${market.baseSymbol}/${market.quoteSymbol}',
-                          labelEnd: formatVolumeUsd(
-                            double.parse(market.volumeUsd24Hr),
+                  },
+                ),
+                if (widget.asset.changePercent24Hr != null)
+                  Text(
+                    '${double.parse(widget.asset.changePercent24Hr!) > 0 ? '▲' : '▼'} ${double.parse(widget.asset.changePercent24Hr!).toStringAsFixed(2)}%',
+                    style: theme.textTheme.titleMedium!.copyWith(
+                      color:
+                          double.parse(widget.asset.changePercent24Hr!) >= 0
+                              ? Colors.green
+                              : Colors.red,
+                    ),
+                  ),
+                SizedBox.fromSize(
+                  size: Size.fromHeight(240),
+                  child: BlocBuilder<HistoryCubit, HistoryState>(
+                    bloc:
+                        _historyCubit
+                          ..load(id: widget.asset.id, interval: 'd1'),
+                    builder: (context, state) {
+                      if (state is HistoryLoading) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: PaddingSize.extraLarge),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
                           ),
                         );
-                      },
-                      separatorBuilder: (context, index) => Divider(height: 1),
-                    );
-                  } else if (state is MarketEmpty) {
-                    return const Center(
-                      child: Text(
-                        'Nenhum crypto encontrado.',
-                        textAlign: TextAlign.center,
+                      } else if (state is HistorySuccess) {
+                        final List<double> data =
+                            state.historys
+                                .map(
+                                  (element) => double.parse(element.priceUsd),
+                                )
+                                .toList();
+                        return ChartWidget(
+                          data: data,
+                          showTouchTooltip: true,
+                          gradientColors: [
+                            theme.colorScheme.primary,
+                            Colors.transparent,
+                          ],
+                          // interval: 2,
+                          // thickness: 0.0,
+                        );
+                      } else if (state is HistoryEmpty) {
+                        return const Center(
+                          child: Text(
+                            'Nenhum crypto encontrado.',
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      } else if (state is HistoryError) {
+                        return Center(
+                          child: Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }
+                      return const LimitedBox();
+                    },
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(top: PaddingSize.medium),
+                  child: IntervalSelectorWidget(
+                    intervals: ['m1', 'm5', 'h1', 'h6', 'd1'],
+                    initialInterval: 'd1',
+                    onSelected: (selectedInterval) {
+                      _historyCubit.load(
+                        id: widget.asset.id,
+                        interval: selectedInterval,
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(PaddingSize.medium),
+                  child: Text(
+                    'Estatísticas de moedas',
+                    style: theme.textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                StatisticItem(labelStart: 'Rank', labelEnd: widget.asset.rank),
+                if (widget.asset.marketCapUsd != null)
+                  StatisticItem(
+                    labelStart: 'Valor de mercado',
+                    labelEnd: formatPrice(
+                      double.parse(widget.asset.marketCapUsd!),
+                    ),
+                  ),
+                if (widget.asset.vwap24Hr != null)
+                  StatisticItem(
+                    labelStart: 'PMPV (24Hr)',
+                    labelEnd: formatPrice(double.parse(widget.asset.vwap24Hr!)),
+                  ),
+                if (widget.asset.supply != null)
+                  StatisticItem(
+                    labelStart: 'Fornecimento',
+                    labelEnd: formatPrice(double.parse(widget.asset.supply!)),
+                  ),
+                if (widget.asset.volumeUsd24Hr != null)
+                  StatisticItem(
+                    labelStart: 'Volume (24Hr)',
+                    labelEnd:
+                        '\$${formatMultPrices(double.parse(widget.asset.volumeUsd24Hr!))}',
+                  ),
+                if (widget.asset.changePercent24Hr != null)
+                  StatisticItem(
+                    labelStart: 'Percentual (24Hr)',
+                    labelEnd:
+                        '${double.parse(widget.asset.changePercent24Hr!) > 0 ? '▲' : '▼'} ${double.parse(widget.asset.changePercent24Hr!).toStringAsFixed(2)}%',
+                    colorEnd:
+                        double.parse(widget.asset.changePercent24Hr!) >= 0
+                            ? Colors.green
+                            : Colors.red,
+                  ),
+                Padding(
+                  padding: EdgeInsets.all(PaddingSize.medium),
+                  child: Text(
+                    'Mercados disponíveis',
+                    style: theme.textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Divider(height: 1),
+                Padding(
+                  padding: EdgeInsets.all(PaddingSize.small),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Nome',
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    );
-                  } else if (state is MarketError) {
-                    return Center(
-                      child: Text(state.message, textAlign: TextAlign.center),
-                    );
-                  }
-                  return const LimitedBox();
-                },
-              ),
-            ],
+                      Expanded(
+                        child: Text(
+                          'Par',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Volume (24Hr)',
+                          textAlign: TextAlign.end,
+
+                          style: theme.textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                BlocBuilder<MarketsCubit, MarketsState>(
+                  bloc: _marketsCubit..load(widget.asset.id),
+                  builder: (context, state) {
+                    if (state is MarketLoading) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: PaddingSize.extraLarge),
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+                    } else if (state is MarketSuccess) {
+                      return ListView.separated(
+                        primary: false,
+                        itemCount: state.markets.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final market = state.markets[index];
+
+                          return StatisticItem(
+                            labelStart: market.exchangeId,
+                            labelCenter:
+                                '${market.baseSymbol}/${market.quoteSymbol}',
+                            labelEnd: formatVolumeUsd(
+                              double.parse(market.volumeUsd24Hr),
+                            ),
+                          );
+                        },
+                        separatorBuilder:
+                            (context, index) => Divider(height: 1),
+                      );
+                    } else if (state is MarketEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Nenhum crypto encontrado.',
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    } else if (state is MarketError) {
+                      return Center(
+                        child: Text(state.message, textAlign: TextAlign.center),
+                      );
+                    }
+                    return const LimitedBox();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
