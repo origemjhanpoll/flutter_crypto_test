@@ -15,16 +15,11 @@ class BottomNavigationBarWidget extends StatelessWidget {
     return BottomNavigationBar(
       onTap: onTap,
       currentIndex: currentIndex,
-      // showSelectedLabels: false,
-      // showUnselectedLabels: false,
       selectedItemColor: theme.colorScheme.primary,
       unselectedItemColor: theme.colorScheme.secondary,
       items: [
         BottomNavigationBarItem(label: 'Criptos', icon: Icon(Icons.token)),
-        BottomNavigationBarItem(
-          label: 'Favoritos',
-          icon: Icon(Icons.view_list),
-        ),
+        BottomNavigationBarItem(label: 'Favoritos', icon: Icon(Icons.favorite)),
       ],
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter_crypto_test/app/repositories/repository.dart';
 import 'package:flutter_crypto_test/app/services/api_service.dart';
 import 'package:flutter_crypto_test/app/services/local_service.dart';
 import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_cubit.dart';
+import 'package:flutter_crypto_test/app/viewmodel/favorites/favorite_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/history/history_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/markets/markets_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/price/price_cubit.dart';
@@ -32,5 +33,8 @@ Future<void> init() async {
   );
   di.registerFactory<MarketsCubit>(
     () => MarketsCubit(repository: di<IRepository>()),
+  );
+  di.registerFactory<FavoriteCubit>(
+    () => FavoriteCubit(repository: di<IRepository>()),
   );
 }

@@ -76,21 +76,36 @@ class Repository implements IRepository {
   }
 
   @override
-  Future<void> saveCryptoIds(List<String> ids) async {
+  Future<void> saveFavorite(CryptoModel asset) async {
     try {
-      await _localService.saveCryptoIds(ids);
+      final json = jsonEncode(asset.toJson());
+      await _localService.saveFavorite(json);
     } catch (e) {
-      debugPrint('Erro ao salvar IDs de criptos: $e');
+      debugPrint('Erro ao salvar asset de favoritos: $e');
       rethrow;
     }
   }
 
   @override
-  Future<List<String>> getCryptoIds() async {
+  Future<void> removeFavorite(String id) async {
     try {
-      return await _localService.getCryptoIds();
+      await _localService.removeFavorite(id);
     } catch (e) {
-      debugPrint('Erro ao obter IDs de criptos: $e');
+      debugPrint('Erro ao remover asset de favoritos: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<CryptoModel>> getFavorites() async {
+    try {
+      final jsonList = await _localService.getFavorites();
+
+      return jsonList
+          .map((element) => CryptoModel.fromJson(jsonDecode(element)))
+          .toList();
+    } catch (e) {
+      debugPrint('Erro ao obter favoritos: $e');
       rethrow;
     }
   }

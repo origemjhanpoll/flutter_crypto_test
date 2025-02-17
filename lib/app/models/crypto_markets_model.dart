@@ -12,8 +12,8 @@ class CryptoMarketsModel with _$CryptoMarketsModel {
     required String baseSymbol,
     required String quoteSymbol,
     required String volumeUsd24Hr,
-    required String priceUsd,
-    required String volumePercent,
+    String? priceUsd,
+    String? volumePercent,
   }) = _CryptoMarketsModel;
 
   factory CryptoMarketsModel.fromJson(Map<String, dynamic> json) =>

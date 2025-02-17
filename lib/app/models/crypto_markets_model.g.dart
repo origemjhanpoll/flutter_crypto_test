@@ -15,8 +15,8 @@ _$CryptoMarketsModelImpl _$$CryptoMarketsModelImplFromJson(
   baseSymbol: json['baseSymbol'] as String,
   quoteSymbol: json['quoteSymbol'] as String,
   volumeUsd24Hr: json['volumeUsd24Hr'] as String,
-  priceUsd: json['priceUsd'] as String,
-  volumePercent: json['volumePercent'] as String,
+  priceUsd: json['priceUsd'] as String?,
+  volumePercent: json['volumePercent'] as String?,
 );
 
 Map<String, dynamic> _$$CryptoMarketsModelImplToJson(

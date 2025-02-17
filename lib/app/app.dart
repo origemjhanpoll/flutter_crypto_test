@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crypto_test/app/injection.dart';
 import 'package:flutter_crypto_test/app/viewmodel/cryptos/cryptos_cubit.dart';
+import 'package:flutter_crypto_test/app/viewmodel/favorites/favorite_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/price/price_cubit.dart';
 import 'package:flutter_crypto_test/app/views/pages/favorites_page.dart';
 import 'package:flutter_crypto_test/app/views/pages/home_page.dart';
@@ -17,6 +18,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   final PageController _pageController = PageController();
   late CryptosCubit _cryptosCubit;
+  late FavoriteCubit _favoriteCubit;
   late PriceCubit _priceCubit;
   int _selectedIndex = 0;
 
@@ -32,6 +34,7 @@ class _AppState extends State<App> {
   void initState() {
     _cryptosCubit = di<CryptosCubit>();
     _priceCubit = di<PriceCubit>();
+    _favoriteCubit = di<FavoriteCubit>();
     super.initState();
   }
 
@@ -40,6 +43,7 @@ class _AppState extends State<App> {
     _pageController.dispose();
     _cryptosCubit.close();
     _priceCubit.close();
+    _favoriteCubit.close();
     super.dispose();
   }
 
@@ -50,6 +54,7 @@ class _AppState extends State<App> {
         providers: [
           BlocProvider<CryptosCubit>.value(value: _cryptosCubit),
           BlocProvider<PriceCubit>.value(value: _priceCubit),
+          BlocProvider<FavoriteCubit>.value(value: _favoriteCubit),
         ],
         child: PageView(
           controller: _pageController,

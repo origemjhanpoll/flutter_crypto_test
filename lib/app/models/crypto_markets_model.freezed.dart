@@ -27,8 +27,8 @@ mixin _$CryptoMarketsModel {
   String get baseSymbol => throw _privateConstructorUsedError;
   String get quoteSymbol => throw _privateConstructorUsedError;
   String get volumeUsd24Hr => throw _privateConstructorUsedError;
-  String get priceUsd => throw _privateConstructorUsedError;
-  String get volumePercent => throw _privateConstructorUsedError;
+  String? get priceUsd => throw _privateConstructorUsedError;
+  String? get volumePercent => throw _privateConstructorUsedError;
 
   /// Serializes this CryptoMarketsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,8 +54,8 @@ abstract class $CryptoMarketsModelCopyWith<$Res> {
     String baseSymbol,
     String quoteSymbol,
     String volumeUsd24Hr,
-    String priceUsd,
-    String volumePercent,
+    String? priceUsd,
+    String? volumePercent,
   });
 }
 
@@ -80,8 +80,8 @@ class _$CryptoMarketsModelCopyWithImpl<$Res, $Val extends CryptoMarketsModel>
     Object? baseSymbol = null,
     Object? quoteSymbol = null,
     Object? volumeUsd24Hr = null,
-    Object? priceUsd = null,
-    Object? volumePercent = null,
+    Object? priceUsd = freezed,
+    Object? volumePercent = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -116,15 +116,15 @@ class _$CryptoMarketsModelCopyWithImpl<$Res, $Val extends CryptoMarketsModel>
                     : volumeUsd24Hr // ignore: cast_nullable_to_non_nullable
                         as String,
             priceUsd:
-                null == priceUsd
+                freezed == priceUsd
                     ? _value.priceUsd
                     : priceUsd // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             volumePercent:
-                null == volumePercent
+                freezed == volumePercent
                     ? _value.volumePercent
                     : volumePercent // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
           )
           as $Val,
     );
@@ -147,8 +147,8 @@ abstract class _$$CryptoMarketsModelImplCopyWith<$Res>
     String baseSymbol,
     String quoteSymbol,
     String volumeUsd24Hr,
-    String priceUsd,
-    String volumePercent,
+    String? priceUsd,
+    String? volumePercent,
   });
 }
 
@@ -172,8 +172,8 @@ class __$$CryptoMarketsModelImplCopyWithImpl<$Res>
     Object? baseSymbol = null,
     Object? quoteSymbol = null,
     Object? volumeUsd24Hr = null,
-    Object? priceUsd = null,
-    Object? volumePercent = null,
+    Object? priceUsd = freezed,
+    Object? volumePercent = freezed,
   }) {
     return _then(
       _$CryptoMarketsModelImpl(
@@ -208,15 +208,15 @@ class __$$CryptoMarketsModelImplCopyWithImpl<$Res>
                 : volumeUsd24Hr // ignore: cast_nullable_to_non_nullable
                     as String,
         priceUsd:
-            null == priceUsd
+            freezed == priceUsd
                 ? _value.priceUsd
                 : priceUsd // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         volumePercent:
-            null == volumePercent
+            freezed == volumePercent
                 ? _value.volumePercent
                 : volumePercent // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
       ),
     );
   }
@@ -232,8 +232,8 @@ class _$CryptoMarketsModelImpl implements _CryptoMarketsModel {
     required this.baseSymbol,
     required this.quoteSymbol,
     required this.volumeUsd24Hr,
-    required this.priceUsd,
-    required this.volumePercent,
+    this.priceUsd,
+    this.volumePercent,
   });
 
   factory _$CryptoMarketsModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -252,9 +252,9 @@ class _$CryptoMarketsModelImpl implements _CryptoMarketsModel {
   @override
   final String volumeUsd24Hr;
   @override
-  final String priceUsd;
+  final String? priceUsd;
   @override
-  final String volumePercent;
+  final String? volumePercent;
 
   @override
   String toString() {
@@ -321,8 +321,8 @@ abstract class _CryptoMarketsModel implements CryptoMarketsModel {
     required final String baseSymbol,
     required final String quoteSymbol,
     required final String volumeUsd24Hr,
-    required final String priceUsd,
-    required final String volumePercent,
+    final String? priceUsd,
+    final String? volumePercent,
   }) = _$CryptoMarketsModelImpl;
 
   factory _CryptoMarketsModel.fromJson(Map<String, dynamic> json) =
@@ -341,9 +341,9 @@ abstract class _CryptoMarketsModel implements CryptoMarketsModel {
   @override
   String get volumeUsd24Hr;
   @override
-  String get priceUsd;
+  String? get priceUsd;
   @override
-  String get volumePercent;
+  String? get volumePercent;
 
   /// Create a copy of CryptoMarketsModel
   /// with the given fields replaced by the non-null parameter values.

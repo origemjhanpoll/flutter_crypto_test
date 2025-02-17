@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
-    _priceCubit.close();
+    _cubit.close();
     super.dispose();
   }
 
@@ -55,6 +55,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: SearchBar(
+          textInputAction: TextInputAction.search,
           focusNode: _focusNode,
           controller: _controller,
           onTapOutside: (_) => _focusNode.unfocus(),

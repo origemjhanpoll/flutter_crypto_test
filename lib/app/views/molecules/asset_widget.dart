@@ -45,8 +45,8 @@ class _AssetWidgetState extends State<AssetWidget> {
 
   @override
   void initState() {
-    super.initState();
     lastPrice = widget.priceUsd;
+    super.initState();
   }
 
   @override

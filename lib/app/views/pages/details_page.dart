@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_crypto_test/app/injection.dart';
 import 'package:flutter_crypto_test/app/models/crypto_model.dart';
+import 'package:flutter_crypto_test/app/viewmodel/favorites/favorite_cubit.dart';
+import 'package:flutter_crypto_test/app/viewmodel/favorites/favorite_state.dart';
 import 'package:flutter_crypto_test/app/viewmodel/history/history_cubit.dart';
 import 'package:flutter_crypto_test/app/viewmodel/history/history_state.dart';
 import 'package:flutter_crypto_test/app/viewmodel/markets/markets_cubit.dart';
@@ -25,15 +27,19 @@ class _DetailsPageState extends State<DetailsPage> {
   late PriceCubit _priceCubit;
   late HistoryCubit _historyCubit;
   late MarketsCubit _marketsCubit;
+  late FavoriteCubit _favoriteCubit;
+
+  final isFavorite = ValueNotifier<bool>(false);
 
   String? lastPrice;
 
   @override
   void initState() {
     lastPrice = widget.asset.priceUsd;
-    _priceCubit = di<PriceCubit>();
+    _priceCubit = di<PriceCubit>()..startPriceUpdates(ids: [widget.asset.id]);
     _historyCubit = di<HistoryCubit>();
     _marketsCubit = di<MarketsCubit>();
+    _favoriteCubit = di<FavoriteCubit>()..load();
     super.initState();
   }
 
@@ -42,6 +48,7 @@ class _DetailsPageState extends State<DetailsPage> {
     _priceCubit.close();
     _historyCubit.close();
     _marketsCubit.close();
+    _favoriteCubit.close();
     super.dispose();
   }
 
@@ -78,7 +85,34 @@ class _DetailsPageState extends State<DetailsPage> {
             ],
           ),
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(size: 28.0, Icons.add)),
+            BlocListener<FavoriteCubit, FavoriteState>(
+              bloc: _favoriteCubit,
+              listener: (context, state) {
+                if (state is FavoriteSuccess) {
+                  isFavorite.value = state.favorites.any(
+                    (element) => element.id == widget.asset.id,
+                  );
+                }
+              },
+              child: ValueListenableBuilder(
+                valueListenable: isFavorite,
+                builder: (context, isFavorite, child) {
+                  return IconButton(
+                    onPressed: () {
+                      if (isFavorite) {
+                        _favoriteCubit.remove(widget.asset);
+                      } else {
+                        _favoriteCubit.save(widget.asset);
+                      }
+                    },
+                    icon: Icon(
+                      size: 28.0,
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
         body: SafeArea(
@@ -87,7 +121,7 @@ class _DetailsPageState extends State<DetailsPage> {
             child: Column(
               children: [
                 BlocBuilder<PriceCubit, Map<String, String>>(
-                  bloc: _priceCubit..startPriceUpdates(ids: [widget.asset.id]),
+                  bloc: _priceCubit,
                   builder: (context, prices) {
                     final price = prices[widget.asset.id];
 
@@ -146,8 +180,6 @@ class _DetailsPageState extends State<DetailsPage> {
                             theme.colorScheme.primary,
                             Colors.transparent,
                           ],
-                          // interval: 2,
-                          // thickness: 0.0,
                         );
                       } else if (state is HistoryEmpty) {
                         return const Center(

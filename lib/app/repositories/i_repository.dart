@@ -10,6 +10,7 @@ abstract class IRepository {
     required String interval,
   });
   Stream<Map<String, String>> getPricesStream(List<String> ids);
-  Future<void> saveCryptoIds(List<String> ids);
-  Future<List<String>> getCryptoIds();
+  Future<List<CryptoModel>> getFavorites();
+  Future<void> saveFavorite(CryptoModel asset);
+  Future<void> removeFavorite(String id);
 }
